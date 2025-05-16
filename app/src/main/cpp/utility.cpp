@@ -1,0 +1,79 @@
+#include "arcore_manager.h"
+
+void ARCoreManager::RotateCube(float degrees) {
+    cube_rotation_angle += glm::radians(degrees);
+}
+
+void ARCoreManager::ScaleCube(float scale) {
+    scaling_factor += scale;
+}
+
+void ARCoreManager::DrawVector(glm::vec3 start, glm::vec3 end) {
+    test_x_s = start[0];
+    test_y_s = start[1];
+    test_z_s = start[2];
+
+    test_x_e = end[0];
+    test_y_e = end[1];
+    test_z_e = end[2];
+}
+
+void ARCoreManager::OnTouch(float x, float y) {
+//    LOG_TID("SANJU : ARCoreManager::OnTouch - ");
+    if(ar_session == nullptr || ar_frame == nullptr) return;
+
+    /* Reset the translation vector */
+    cube_translation_vector = glm::vec3(0.0f);
+
+    ArHitResultList* hit_result_list = nullptr;
+    ArHitResultList_create(ar_session, &hit_result_list);
+    ArFrame_hitTest(ar_session, ar_frame, x, y, hit_result_list);
+
+    int32_t hit_result_list_size = 0;
+    ArHitResultList_getSize(ar_session, hit_result_list, &hit_result_list_size);
+
+    if(hit_result_list_size > 0) {
+        ArHitResult* hit_result = nullptr;
+        ArHitResult_create(ar_session, &hit_result);
+        ArHitResultList_getItem(ar_session, hit_result_list, 0, hit_result);
+
+        ArTrackable* trackable = nullptr;
+        ArHitResult_acquireTrackable(ar_session, hit_result, &trackable);
+        ArTrackableType trackableType;
+        ArTrackable_getType(ar_session, trackable, &trackableType);
+
+        if(trackableType == AR_TRACKABLE_PLANE) {
+            ArPose* pose = nullptr;
+            ArPose_create(ar_session, nullptr, &pose);
+            ArHitResult_getHitPose(ar_session, hit_result, pose);
+
+            float pose_matrix[16];
+            ArPose_getMatrix(ar_session, pose, pose_matrix);
+
+            plane_normal = glm::vec3(pose_matrix[4], pose_matrix[5], pose_matrix[6]);
+            LOGI("SANJU : Plane Normal - %f %f %f", plane_normal[0], plane_normal[1], plane_normal[2]);
+            plane_normal = glm::normalize(plane_normal);
+
+            hit_pose_matrix = glm::make_mat4(pose_matrix);
+
+            hit_pose_matrix = glm::translate(hit_pose_matrix, glm::vec3(0.0f, 0.5 * scaling_factor, 0.0f));
+
+            object_place = true;
+        }
+    }
+}
+
+void ARCoreManager::TranslateCube(float x, float y, float z) {
+    /* Homogenous coordinate(w) set to 0 -
+     * because we don't want the translation part of the view matrix to affect the inverse calculation */
+    glm::vec4 raw_direction = glm::vec4(x, y, z, 0);
+    LOGI("SANJU : Raw direction : %f %f %f", raw_direction[0], raw_direction[1], raw_direction[2]);
+    glm::mat4 inv_view = glm::inverse(view);
+    glm::vec3 direction_in_camera_space = inv_view * raw_direction;
+    LOGI("SANJU : After inverse direction : %f %f %f", direction_in_camera_space[0], direction_in_camera_space[1], direction_in_camera_space[2]);
+
+    /* Now extracting the orientation of the hit point */
+    glm::vec3 direction_on_plane = direction_in_camera_space - glm::dot(direction_in_camera_space, plane_normal) * plane_normal;
+    LOGI("SANJU : After dot product : %f %f %f", direction_on_plane[0], direction_on_plane[1], direction_on_plane[2]);
+    cube_translation_vector += direction_on_plane;
+}
