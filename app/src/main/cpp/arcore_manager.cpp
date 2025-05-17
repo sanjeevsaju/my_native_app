@@ -1,24 +1,5 @@
 #include "arcore_manager.h"
 
-void TransformPoint(const float model_matrix[16], const float local_point[3], float world_point[3]) {
-    /* Convert the local point to homogeneous coordinates */
-    float local_point_homogeneous[4] = {local_point[0], local_point[1], local_point[2], 1.0f};
-    float result[4] = {0};
-
-    /* Perform matrix multiplication : result = model_matrix * local_point_homogeneous */
-    /* The model_matrix is in column major order */
-    /* I think this can be optimized using SIMD */
-    for(int i = 0; i < 4; ++i) {
-        for(int j = 0; j < 4; ++j) {
-            result[i] += model_matrix[j * 4 + i] * local_point_homogeneous[j];
-        }
-    }
-
-    world_point[0] = result[0];
-    world_point[1] = result[1];
-    world_point[2] = result[2];
-}
-
 /* Runs on the main thread */
 bool ARCoreManager::Initialize(void *env, jobject context, jobject activity) {
 //    LOG_TID("SANJU : ARCoreManager::Initialize - ");
