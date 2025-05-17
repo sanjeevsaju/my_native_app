@@ -54,7 +54,7 @@ private:
     int32_t screen_width = 0;
     int32_t screen_height = 0;
 
-    GLfloat scaling_factor = 0.5f;
+    GLfloat scaling_factor = 1.0f;
 
     GLuint plane_shader_program;
     GLuint camera_shader_program;
