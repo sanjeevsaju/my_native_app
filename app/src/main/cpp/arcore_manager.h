@@ -36,7 +36,7 @@ public:
     void TranslateCube(float x, float y, float z);
     void DrawVector(glm::vec3 start, glm::vec3 end);
     bool IsDepthSupported();
-    void TransformPoint(const float model_matrix[16], const float local_point[3], float world_point[3]);
+    static void TransformPoint(const float model_matrix[16], const float local_point[3], float world_point[3]);
 
 private:
 
