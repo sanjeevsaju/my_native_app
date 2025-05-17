@@ -112,11 +112,6 @@ class MainActivity : ComponentActivity() {
         println("SANJU : Configuration Changed")
     }
 
-    override fun onDestroy() {
-        super.onDestroy()
-
-    }
-
 //    override fun onTouchEvent(event: MotionEvent?): Boolean {
 //        if(event?.action == MotionEvent.ACTION_DOWN) {
 //            val x_val = event.x
