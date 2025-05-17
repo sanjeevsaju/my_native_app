@@ -1,5 +1,16 @@
 #include "arcore_manager.h"
 
+bool ARCoreManager::IsDepthSupported() {
+    if(!ar_session) return false;
+
+    ArConfig* ar_config = nullptr;
+    ArConfig_create(ar_session, &ar_config);
+    bool isSupported = false;
+    ArSession_isDepthModeSupported(ar_session, AR_DEPTH_MODE_AUTOMATIC,
+                                   reinterpret_cast<int32_t *>(&isSupported));
+    return isSupported;
+}
+
 void ARCoreManager::RotateCube(float degrees) {
     cube_rotation_angle += glm::radians(degrees);
 }

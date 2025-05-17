@@ -35,6 +35,7 @@ public:
     void ScaleCube(float scale);
     void TranslateCube(float x, float y, float z);
     void DrawVector(glm::vec3 start, glm::vec3 end);
+    bool IsDepthSupported();
 
 private:
 

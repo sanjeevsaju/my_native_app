@@ -7,6 +7,7 @@ void TransformPoint(const float model_matrix[16], const float local_point[3], fl
 
     /* Perform matrix multiplication : result = model_matrix * local_point_homogeneous */
     /* The model_matrix is in column major order */
+    /* I think this can be optimized using SIMD */
     for(int i = 0; i < 4; ++i) {
         for(int j = 0; j < 4; ++j) {
             result[i] += model_matrix[j * 4 + i] * local_point_homogeneous[j];
@@ -33,6 +34,7 @@ bool ARCoreManager::Initialize(void *env, jobject context, jobject activity) {
     }
 
     ArFrame_create(ar_session, &ar_frame);
+
     return true;
 }
 
@@ -497,6 +499,8 @@ void ARCoreManager::OnDrawFrame(int width, int height, int displayRotation) {
 
     int count = 0;
     ArTrackableList_getSize(ar_session, planes, &count);
+
+    /* Check if rest of the code can be optimized using SIMD */
     for(int i = 0; i < count; i++) {
         ArTrackable *trackable;
         ArTrackableList_acquireItem(ar_session, planes, i, &trackable);
@@ -574,12 +578,6 @@ void ARCoreManager::OnDrawFrame(int width, int height, int displayRotation) {
         glm::mat4 cube_rotation = glm::rotate(glm::mat4(1.0f), cube_rotation_angle, cube_rotation_axis);
         glm::mat4 cube_translation = glm::translate(glm::mat4(1.0f), cube_translation_vector);
         glm::mat4 cube_mvp = proj * view * cube_translation * cube_model * cube_rotation * cube_scale;
-
-        glm::mat4 cube_m_t = cube_translation * cube_model;
-        glm::vec3 vec_start = {cube_model[3][0], cube_model[3][1], cube_model[3][2]};
-        glm::vec3 vec_end = {cube_m_t[3][0], cube_m_t[3][2], cube_m_t[3][2]};
-
-        DrawVector(vec_start, vec_end);
 
         GLuint mvpLocation = glGetUniformLocation(object_shader_program, "mvp");
         glUniformMatrix4fv(mvpLocation, 1, GL_FALSE, glm::value_ptr(cube_mvp));
