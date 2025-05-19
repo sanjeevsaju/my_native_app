@@ -224,12 +224,12 @@ void ARCoreManager::OnSurfaceCreated() {
     const char* objectVertexShaderSource = R"(
         #version 300 es
         layout(location = 0) in vec3 vPosition;
-        layout(location = 1) in vec4 vColor;
-        out vec4 frag_vColor;
+        layout(location = 1) in vec2 aTexCoord;
+        out vec2 vTexCoord;
         uniform mat4 mvp;
         void main() {
             gl_Position = mvp * vec4(vPosition, 1.0);
-            frag_vColor = vColor;
+            vTexCoord = aTexCoord;
         }
     )";
 
@@ -237,10 +237,11 @@ void ARCoreManager::OnSurfaceCreated() {
     const char* objectFragmentShaderSource = R"(
         #version 300 es
         precision mediump float;
-        in vec4 frag_vColor;
-        out vec4 fragColor;
+
+        in vec2 vTexCoord
+        uniform sampler2D uTexture;
         void main() {
-            fragColor = frag_vColor;
+            gl_FragColor = texture2D(uTexture, vTexCoord);
         }
     )";
 
@@ -299,40 +300,40 @@ void ARCoreManager::OnSurfaceCreated() {
     const GLfloat cube_vertices[] = {
             // Positions        // Colors (R, G, B, A)
             // Front face
-            -0.5f, -0.5f,  0.5f, 1.0f, 0.0f, 0.0f, 1.0f, // Bottom-left (red)
-            0.5f, -0.5f,  0.5f, 1.0f, 0.0f, 0.0f, 1.0f, // Bottom-right (red)
-            0.5f,  0.5f,  0.5f, 1.0f, 0.0f, 0.0f, 1.0f, // Top-right (red)
-            -0.5f,  0.5f,  0.5f, 1.0f, 0.0f, 0.0f, 1.0f, // Top-left (red)
+            -0.5f, -0.5f,  0.5f, 0.0f, 0.0f, // Bottom-left (red)
+            0.5f, -0.5f,  0.5f, 1.0f, 0.0f, // Bottom-right (red)
+            0.5f,  0.5f,  0.5f, 1.0f, 1.0f, // Top-right (red)
+            -0.5f,  0.5f,  0.5f, 1.0f, 0.0f, // Top-left (red)
 
             // Back face
-            -0.5f, -0.5f, -0.5f, 0.0f, 1.0f, 0.0f, 1.0f, // Bottom-left (green)
-            0.5f, -0.5f, -0.5f, 0.0f, 1.0f, 0.0f, 1.0f, // Bottom-right (green)
-            0.5f,  0.5f, -0.5f, 0.0f, 1.0f, 0.0f, 1.0f, // Top-right (green)
-            -0.5f,  0.5f, -0.5f, 0.0f, 1.0f, 0.0f, 1.0f, // Top-left (green)
+            -0.5f, -0.5f, -0.5f, 0.0f, 0.0f, // Bottom-left (green)
+            0.5f, -0.5f, -0.5f, 1.0f, 0.0f, // Bottom-right (green)
+            0.5f,  0.5f, -0.5f, 1.0f, 1.0f, // Top-right (green)
+            -0.5f,  0.5f, -0.5f, 1.0f, 0.0f, // Top-left (green)
 
             // Left face
-            -0.5f, -0.5f, -0.5f, 0.0f, 0.0f, 1.0f, 1.0f, // Bottom-left (blue)
-            -0.5f, -0.5f,  0.5f, 0.0f, 0.0f, 1.0f, 1.0f, // Bottom-right (blue)
-            -0.5f,  0.5f,  0.5f, 0.0f, 0.0f, 1.0f, 1.0f, // Top-right (blue)
-            -0.5f,  0.5f, -0.5f, 0.0f, 0.0f, 1.0f, 1.0f, // Top-left (blue)
+            -0.5f, -0.5f, -0.5f, 0.0f, 0.0f, // Bottom-left (blue)
+            -0.5f, -0.5f,  0.5f, 1.0f, 0.0f, // Bottom-right (blue)
+            -0.5f,  0.5f,  0.5f, 1.0f, 1.0f, // Top-right (blue)
+            -0.5f,  0.5f, -0.5f, 1.0f, 0.0f, // Top-left (blue)
 
             // Right face
-            0.5f, -0.5f, -0.5f, 1.0f, 1.0f, 0.0f, 1.0f, // Bottom-left (yellow)
-            0.5f, -0.5f,  0.5f, 1.0f, 1.0f, 0.0f, 1.0f, // Bottom-right (yellow)
-            0.5f,  0.5f,  0.5f, 1.0f, 1.0f, 0.0f, 1.0f, // Top-right (yellow)
-            0.5f,  0.5f, -0.5f, 1.0f, 1.0f, 0.0f, 1.0f, // Top-left (yellow)
+            0.5f, -0.5f, -0.5f, 0.0f, 0.0f, // Bottom-left (yellow)
+            0.5f, -0.5f,  0.5f, 1.0f, 0.0f, // Bottom-right (yellow)
+            0.5f,  0.5f,  0.5f, 1.0f, 1.0f, // Top-right (yellow)
+            0.5f,  0.5f, -0.5f, 1.0f, 0.0f, // Top-left (yellow)
 
             // Top face
-            -0.5f,  0.5f, -0.5f, 1.0f, 0.0f, 1.0f, 1.0f, // Bottom-left (magenta)
-            0.5f,  0.5f, -0.5f, 1.0f, 0.0f, 1.0f, 1.0f, // Bottom-right (magenta)
-            0.5f,  0.5f,  0.5f, 1.0f, 0.0f, 1.0f, 1.0f, // Top-right (magenta)
-            -0.5f,  0.5f,  0.5f, 1.0f, 0.0f, 1.0f, 1.0f, // Top-left (magenta)
+            -0.5f,  0.5f, -0.5f, 0.0f, 0.0f, // Bottom-left (magenta)
+            0.5f,  0.5f, -0.5f, 1.0f, 0.0f, // Bottom-right (magenta)
+            0.5f,  0.5f,  0.5f, 1.0f, 1.0f, // Top-right (magenta)
+            -0.5f,  0.5f,  0.5f, 1.0f, 0.0f, // Top-left (magenta)
 
             // Bottom face
-            -0.5f, -0.5f, -0.5f, 0.0f, 1.0f, 1.0f, 1.0f, // Bottom-left (cyan)
-            0.5f, -0.5f, -0.5f, 0.0f, 1.0f, 1.0f, 1.0f, // Bottom-right (cyan)
-            0.5f, -0.5f,  0.5f, 0.0f, 1.0f, 1.0f, 1.0f, // Top-right (cyan)
-            -0.5f, -0.5f,  0.5f, 0.0f, 1.0f, 1.0f, 1.0f  // Top-left (cyan)
+            -0.5f, -0.5f, -0.5f,0.0f, 0.0f, // Bottom-left (cyan)
+            0.5f, -0.5f, -0.5f, 1.0f, 0.0f, // Bottom-right (cyan)
+            0.5f, -0.5f,  0.5f, 1.0f, 1.0f, // Top-right (cyan)
+            -0.5f, -0.5f, 0.5f, 1.0f, 0.0f  // Top-left (cyan)
     };
 
     const GLuint indices[] = {
@@ -365,11 +366,13 @@ void ARCoreManager::OnSurfaceCreated() {
 
     /* Position */
     glEnableVertexAttribArray(0);
-    glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 7 * sizeof(GLfloat), (void*)0);
+    glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 5 * sizeof(GLfloat), (void*)0);
 
-    /* Color */
+    /* Texture */
     glEnableVertexAttribArray(1);
-    glVertexAttribPointer(1, 4, GL_FLOAT, GL_FALSE, 7 * sizeof(GLfloat), (void *)(3 * sizeof(GLfloat)));
+    glVertexAttribPointer(1, 2, GL_FLOAT, GL_FALSE, 5 * sizeof(GLfloat), (void *)(3 * sizeof(GLfloat)));
+
+    LoadTextureFromFile("/home/sanjeev/AndroidStudioProjects/My_Native_App/app/src/main/cpp/textures/cube_mesh_tex.png");
 
     glBindVertexArray(0);
     /************************************************************************************************/
@@ -398,6 +401,7 @@ void ARCoreManager::OnDrawFrame(int width, int height, int displayRotation) {
     glUseProgram(camera_shader_program);
     glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
     glDisable(GL_DEPTH_TEST);
+
     glActiveTexture(GL_TEXTURE0);
     glBindTexture(GL_TEXTURE_EXTERNAL_OES, cameraTextureId);
     glUniform1i(glGetUniformLocation(camera_shader_program, "u_Texture"), 0);
@@ -563,6 +567,9 @@ void ARCoreManager::OnDrawFrame(int width, int height, int displayRotation) {
         GLuint mvpLocation = glGetUniformLocation(object_shader_program, "mvp");
         glUniformMatrix4fv(mvpLocation, 1, GL_FALSE, glm::value_ptr(cube_mvp));
 
+        glActiveTexture(GL_TEXTURE0);
+        glBindTexture(GL_TEXTURE_2D, cube_textureID);
+        glUniform1i(glGetUniformLocation(object_shader_program, "uTexture"), 0);
         glBindVertexArray(cube_vao);
         glDrawElements(GL_TRIANGLES, 36, GL_UNSIGNED_INT, 0);
         glBindVertexArray(0);

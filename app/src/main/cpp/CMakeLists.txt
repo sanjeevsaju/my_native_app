@@ -26,7 +26,7 @@ project("my_native_app")
 # used in the AndroidManifest.xml file.
 add_library(${CMAKE_PROJECT_NAME} SHARED
         # List C/C++ source files with relative paths to this CMakeLists.txt.
-        native_renderer.cpp arcore_manager.cpp utility.cpp)
+        native_renderer.cpp arcore_manager.cpp utility.cpp stb_image.cpp)
 
 # --------------- Added --------------------#
 add_library(arcore SHARED IMPORTED)

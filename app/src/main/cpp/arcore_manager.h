@@ -37,6 +37,7 @@ public:
     void DrawVector(glm::vec3 start, glm::vec3 end);
     bool IsDepthSupported();
     static void TransformPoint(const float model_matrix[16], const float local_point[3], float world_point[3]);
+    void LoadTextureFromFile(const char* path);
 
 private:
 
@@ -54,7 +55,7 @@ private:
     int32_t screen_width = 0;
     int32_t screen_height = 0;
 
-    GLfloat scaling_factor = 1.0f;
+    GLfloat scaling_factor = 0.5f;
 
     GLuint plane_shader_program;
     GLuint camera_shader_program;
@@ -67,6 +68,7 @@ private:
     GLuint cube_vao;
     GLuint cube_vbo;
     GLuint cube_index_buffer;
+    GLuint cube_textureID;
 
     GLuint plane_vao;
     GLuint plane_vbo;

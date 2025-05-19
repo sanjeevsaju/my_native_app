@@ -7,6 +7,7 @@
 #define LOG_TAG "ARCore Manager"
 #define LOGI(...) __android_log_print(ANDROID_LOG_INFO, LOG_TAG, __VA_ARGS__)
 
+/* Now only the pointer variable is in the .data(initialized global static) process memory segment */
 ARCoreManager *manager = nullptr;
 
 extern "C"

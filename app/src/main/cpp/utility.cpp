@@ -1,4 +1,5 @@
 #include "arcore_manager.h"
+#include "stb_image.h"
 
 void ARCoreManager::TransformPoint(const float model_matrix[16], const float local_point[3], float world_point[3]) {
     /* Convert the local point to homogeneous coordinates */
@@ -106,4 +107,28 @@ void ARCoreManager::TranslateCube(float x, float y, float z) {
     glm::vec3 direction_on_plane = direction_in_camera_space - glm::dot(direction_in_camera_space, plane_normal) * plane_normal;
     LOGI("SANJU : After dot product : %f %f %f", direction_on_plane[0], direction_on_plane[1], direction_on_plane[2]);
     cube_translation_vector += direction_on_plane;
+}
+
+void ARCoreManager::LoadTextureFromFile(const char *path) {
+    int width, height, channels;
+    unsigned char* data = stbi_load(path, &width, &height, &channels, STBI_rgb_alpha);
+
+    if(!data) {
+        LOGI("SANJU : Failed to load texture : %s", path);
+        return;
+    }
+
+    glGenTextures(1, &cube_textureID);
+    glBindTexture(GL_TEXTURE_2D, cube_textureID);
+
+    glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, width, height, 0, GL_RGBA, GL_UNSIGNED_BYTE, data);
+    glGenerateMipmap(GL_TEXTURE_2D);
+
+    /* Texture Params */
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR_MIPMAP_LINEAR);
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+
+    stbi_image_free(data);
 }
