@@ -6,7 +6,10 @@
 #define MY_NATIVE_APP_ARCORE_MANAGER_H
 
 #include "arcore_c_api.h"
+
 #include <android/asset_manager.h>
+#include <android/asset_manager_jni.h>
+
 #include <jni.h>
 #include <GLES3/gl3.h>
 #include <GLES2/gl2ext.h>
@@ -25,7 +28,7 @@
 
 class ARCoreManager {
 public:
-    bool Initialize(void* env, jobject context, jobject activity);
+    bool Initialize(void* env, jobject context, jobject activity, AAssetManager* mgr);
     void Resume();
     void Pause();
     void OnSurfaceCreated();
@@ -51,6 +54,7 @@ private:
 
     ArSession* ar_session = nullptr;
     ArFrame* ar_frame = nullptr;
+    AAssetManager* asset_manager = nullptr;
 
     int32_t screen_width = 0;
     int32_t screen_height = 0;

@@ -1,8 +1,10 @@
 #include "arcore_manager.h"
 
 /* Runs on the main thread */
-bool ARCoreManager::Initialize(void *env, jobject context, jobject activity) {
+bool ARCoreManager::Initialize(void *env, jobject context, jobject activity, AAssetManager* mgr) {
 //    LOG_TID("SANJU : ARCoreManager::Initialize - ");
+
+    asset_manager = mgr;
 
     if(ar_session) return true;
 
@@ -372,7 +374,7 @@ void ARCoreManager::OnSurfaceCreated() {
     glEnableVertexAttribArray(1);
     glVertexAttribPointer(1, 2, GL_FLOAT, GL_FALSE, 5 * sizeof(GLfloat), (void *)(3 * sizeof(GLfloat)));
 
-    LoadTextureFromFile("/home/sanjeev/AndroidStudioProjects/My_Native_App/app/src/main/cpp/textures/cube_mesh_tex.png");
+    LoadTextureFromFile("textures/cube_mesh_tex.png");
 
     glBindVertexArray(0);
     /************************************************************************************************/

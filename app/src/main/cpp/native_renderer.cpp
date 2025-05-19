@@ -13,8 +13,13 @@ ARCoreManager *manager = nullptr;
 extern "C"
 JNIEXPORT void JNICALL
 Java_com_example_my_1native_1app_ARNative_onCreate(JNIEnv *env, jobject thiz, jobject context, jobject activity) {
+    jclass context_class = env->GetObjectClass(context);
+    jmethodID get_assets_method = env->GetMethodID(context_class, "getAssets", "()Landroid/content/res/AssetManager;");
+    jobject asset_manager_jobj = env->CallObjectMethod(context, get_assets_method);
+
+    AAssetManager* asset_manager = AAssetManager_fromJava(env, asset_manager_jobj);
     manager = new ARCoreManager;
-    manager->Initialize(env, context, activity);
+    manager->Initialize(env, context, activity, asset_manager);
 }
 
 extern "C"
