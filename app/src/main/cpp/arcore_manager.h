@@ -6,6 +6,7 @@
 #define MY_NATIVE_APP_ARCORE_MANAGER_H
 
 #include "arcore_c_api.h"
+#include "stb_image.h"
 
 #include <android/asset_manager.h>
 #include <android/asset_manager_jni.h>
@@ -41,6 +42,7 @@ public:
     bool IsDepthSupported();
     static void TransformPoint(const float model_matrix[16], const float local_point[3], float world_point[3]);
     void LoadTextureFromFile(const char* path);
+    std::string LoadShaderFromAsset(const char* shaderPath);
 
 private:
 

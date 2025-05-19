@@ -1,5 +1,4 @@
 #include "arcore_manager.h"
-#include "stb_image.h"
 
 void ARCoreManager::TransformPoint(const float model_matrix[16], const float local_point[3], float world_point[3]) {
     /* Convert the local point to homogeneous coordinates */
@@ -148,4 +147,26 @@ void ARCoreManager::LoadTextureFromFile(const char *path) {
     glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
 
     stbi_image_free(data);
+}
+
+std::string ARCoreManager::LoadShaderFromAsset(const char *shaderPath) {
+    if(!asset_manager) {
+        LOGI("SANJU : asset_manager is null");
+        return "Fuck You!";
+    }
+
+    AAsset* asset = AAssetManager_open(asset_manager, shaderPath, AASSET_MODE_BUFFER);
+    if(!asset) {
+        LOGI("SANJU : Failed to load asset : %s", shaderPath);
+        return "Wow!";
+    }
+
+    size_t length = AAsset_getLength(asset);
+    char* buffer = new char[length + 1];
+    AAsset_read(asset, buffer, length);
+    buffer[length] = '\0';
+    std::string shaderCode(buffer);
+    AAsset_close(asset);
+    delete[] buffer;
+    return shaderCode;
 }

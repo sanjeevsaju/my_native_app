@@ -61,28 +61,11 @@ void ARCoreManager::OnSurfaceCreated() {
 
     /************ Axis Rendering Starts *************************/
 
-    // Axis shaders
-    const char* axisVertexShaderSource = R"(
-    #version 300 es
-    layout(location = 0) in vec3 vPosition;
-    layout(location = 1) in vec3 vColor;
-    out vec3 fragColor;
-    uniform mat4 mvp;
-    void main() {
-        gl_Position = mvp * vec4(vPosition, 1.0);
-        fragColor = vColor;
-    }
-)";
+    std::string axisVertexShaderCode = LoadShaderFromAsset("shaders/axis/axis.vert");
+    const char* axisVertexShaderSource = axisVertexShaderCode.c_str();
 
-    const char* axisFragmentShaderSource = R"(
-    #version 300 es
-    precision mediump float;
-    in vec3 fragColor;
-    out vec4 outColor;
-    void main() {
-        outColor = vec4(fragColor, 1.0);
-    }
-)";
+    std::string axisFragmentShaderCode = LoadShaderFromAsset("shaders/axis/axis.frag");
+    const char* axisFragmentShaderSource = axisFragmentShaderCode.c_str();
 
 // Compile and link axis shaders
     GLuint axisVertexShader = glCreateShader(GL_VERTEX_SHADER);
@@ -134,25 +117,11 @@ void ARCoreManager::OnSurfaceCreated() {
 
     /*********** Axis Rendering Stops **************************/
 
-    /* Object vertex shader source code */
-    const char* planeVertexShaderSource = R"(
-        #version 300 es
-        layout(location = 0) in vec3 vPosition;
-        uniform mat4 mvp;
-        void main() {
-            gl_Position = mvp * vec4(vPosition, 1.0);
-        }
-    )";
+    std::string planeVertexShaderCode = LoadShaderFromAsset("shaders/plane/plane.vert");
+    const char* planeVertexShaderSource = planeVertexShaderCode.c_str();
 
-    /* Object fragment shader source code with ES3 syntax */
-    const char* planeFragmentShaderSource = R"(
-        #version 300 es
-        precision mediump float;
-        out vec4 fragColor;
-        void main() {
-            fragColor = vec4(0.0, 1.0, 0.0, 0.1);
-        }
-    )";
+    std::string planeFragmentCode = LoadShaderFromAsset("shaders/plane/plane.frag");
+    const char* planeFragmentShaderSource = planeFragmentCode.c_str();
 
     /* Compile and link object rendering shaders */
     GLuint vertexShader = glCreateShader(GL_VERTEX_SHADER);
@@ -168,46 +137,13 @@ void ARCoreManager::OnSurfaceCreated() {
     glAttachShader(plane_shader_program, fragmentShader);
     glLinkProgram(plane_shader_program);
 
-    /* Camera vertex shader source code */
-    const char* cameraVertexShaderSource = R"(
-        #version 300 es
-        layout(location = 0) in vec4 a_Position;
-        layout(location = 1) in vec2 a_TexCoord;
-        out vec2 v_TexCoord;
-        uniform int u_Rotation;
+    /****************** Camera Rendering Program Starts *************/
 
-        void main() {
-            gl_Position = a_Position;
-            switch(u_Rotation) {
-                case 1: // 90° counter-clockwise (landscape)
-                    v_TexCoord = vec2(a_TexCoord.x, a_TexCoord.y);
-                    break;
-                case 2: // 180° (upside down portrait)
-                    v_TexCoord = vec2(1.0 - a_TexCoord.y, a_TexCoord.x);
-                    break;
-                case 3: // 270° counter-clockwise (reverse landscape)
-                    v_TexCoord = vec2(1.0 - a_TexCoord.x, 1.0 - a_TexCoord.y);
-                    break;
-                default: // 0° (portrait)
-                    // Rotate 90° clockwise from landscape to portrait
-                    v_TexCoord = vec2(a_TexCoord.y, 1.0 - a_TexCoord.x);
-            }
-        }
-    )";
+    std::string cameraVertexShaderCode = LoadShaderFromAsset("shaders/camera/camera.vert");
+    const char* cameraVertexShaderSource = cameraVertexShaderCode.c_str();
 
-    /* Camera fragment shader source code */
-    const char* cameraFragmentShaderSource = R"(
-        #version 300 es
-        #extension GL_OES_EGL_image_external_essl3 : require
-        precision mediump float;
-        in vec2 v_TexCoord;
-        layout(location = 0) out vec4 outColor;
-        uniform samplerExternalOES u_Texture;
-
-        void main() {
-            outColor = texture(u_Texture, v_TexCoord);
-        }
-    )";
+    std::string cameraFragmentShaderCode = LoadShaderFromAsset("shaders/camera/camera.frag");
+    const char* cameraFragmentShaderSource = cameraFragmentShaderCode.c_str();
 
     /* Compile and link object rendering shaders */
     GLuint cameraVertexShader = glCreateShader(GL_VERTEX_SHADER);
@@ -223,29 +159,16 @@ void ARCoreManager::OnSurfaceCreated() {
     glAttachShader(camera_shader_program, cameraFragmentShader);
     glLinkProgram(camera_shader_program);
 
-    const char* objectVertexShaderSource = R"(
-        #version 300 es
-        layout(location = 0) in vec3 vPosition;
-        layout(location = 1) in vec2 aTexCoord;
-        out vec2 vTexCoord;
-        uniform mat4 mvp;
-        void main() {
-            gl_Position = mvp * vec4(vPosition, 1.0);
-            vTexCoord = aTexCoord;
-        }
-    )";
+    /****************** Camera Rendering Program Ends *************/
 
-    // Fragment shader source with ES3 syntax
-    const char* objectFragmentShaderSource = R"(
-        #version 300 es
-        precision mediump float;
-        in vec2 vTexCoord;
-        out vec4 fragColor;
-        uniform sampler2D uTexture;
-        void main() {
-            fragColor = texture(uTexture, vTexCoord);
-        }
-    )";
+    /****************** Object Rendering Program Starts ***********/
+
+    std::string objectVertexShaderCode = LoadShaderFromAsset("shaders/object/object.vert");
+    const char* objectVertexShaderSource = objectVertexShaderCode.c_str();
+
+    std::string objectFragmentShaderCode = LoadShaderFromAsset("shaders/object/object.frag");
+    const char* objectFragmentShaderSource = objectFragmentShaderCode.c_str();
+
 
     // Compile and link shaders
     GLuint objectVertexShader = glCreateShader(GL_VERTEX_SHADER);
@@ -260,6 +183,8 @@ void ARCoreManager::OnSurfaceCreated() {
     glAttachShader(object_shader_program, objectVertexShader);
     glAttachShader(object_shader_program, objectFragmentShader);
     glLinkProgram(object_shader_program);
+
+    /****************** Object Rendering Program Ends ***********/
 
     /* ------------------------------------------------------------------------------------------ */
 
