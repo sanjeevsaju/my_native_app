@@ -239,11 +239,11 @@ void ARCoreManager::OnSurfaceCreated() {
     const char* objectFragmentShaderSource = R"(
         #version 300 es
         precision mediump float;
-
-        in vec2 vTexCoord
+        in vec2 vTexCoord;
+        out vec4 fragColor;
         uniform sampler2D uTexture;
         void main() {
-            gl_FragColor = texture2D(uTexture, vTexCoord);
+            fragColor = texture(uTexture, vTexCoord);
         }
     )";
 
@@ -374,7 +374,7 @@ void ARCoreManager::OnSurfaceCreated() {
     glEnableVertexAttribArray(1);
     glVertexAttribPointer(1, 2, GL_FLOAT, GL_FALSE, 5 * sizeof(GLfloat), (void *)(3 * sizeof(GLfloat)));
 
-    LoadTextureFromFile("textures/cube_mesh_tex.png");
+    LoadTextureFromFile("textures/fb.png");
 
     glBindVertexArray(0);
     /************************************************************************************************/

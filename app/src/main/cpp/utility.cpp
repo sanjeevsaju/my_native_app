@@ -110,8 +110,25 @@ void ARCoreManager::TranslateCube(float x, float y, float z) {
 }
 
 void ARCoreManager::LoadTextureFromFile(const char *path) {
+
+    if(!asset_manager) {
+        LOGI("SANJU : asset_manager is null");
+        return;
+    }
+
+    AAsset* asset = AAssetManager_open(asset_manager, path, AASSET_MODE_BUFFER);
+    if(!asset) {
+        LOGI("SANJU : Failed to load asset : %s", path);
+        return;
+    }
+
+    /* Reading asset data into memory */
+    const void* asset_data = AAsset_getBuffer(asset);
+    off_t asset_size = AAsset_getLength(asset);
+
     int width, height, channels;
-    unsigned char* data = stbi_load(path, &width, &height, &channels, STBI_rgb_alpha);
+    unsigned char* data = stbi_load_from_memory(static_cast<const unsigned char*>(asset_data), asset_size, &width, &height, &channels, STBI_rgb_alpha);
+    AAsset_close(asset);
 
     if(!data) {
         LOGI("SANJU : Failed to load texture : %s", path);
