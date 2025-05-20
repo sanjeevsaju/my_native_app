@@ -1,7 +1,7 @@
 #include "arcore_manager.h"
 
 /* Runs on the main thread */
-bool ARCoreManager::Initialize(void *env, jobject context, jobject activity, AAssetManager* mgr) {
+bool ARCoreManager::Initialize(void *env, jobject context, AAssetManager* mgr) {
 //    LOG_TID("SANJU : ARCoreManager::Initialize - ");
 
     asset_manager = mgr;
@@ -225,57 +225,61 @@ void ARCoreManager::OnSurfaceCreated() {
 
     /************************************************************************************************/
     const GLfloat cube_vertices[] = {
-            // Positions        // Colors (R, G, B, A)
             // Front face
-            -0.5f, -0.5f,  0.5f, 0.0f, 0.0f, // Bottom-left (red)
-            0.5f, -0.5f,  0.5f, 1.0f, 0.0f, // Bottom-right (red)
-            0.5f,  0.5f,  0.5f, 1.0f, 1.0f, // Top-right (red)
-            -0.5f,  0.5f,  0.5f, 1.0f, 0.0f, // Top-left (red)
+            -0.5f, -0.5f,  0.5f,  0.0f, 0.0f,  // Bottom-left
+            0.5f, -0.5f,  0.5f,  1.0f, 0.0f,  // Bottom-right
+            0.5f,  0.5f,  0.5f,  1.0f, 1.0f,  // Top-right
+            -0.5f,  0.5f,  0.5f,  0.0f, 1.0f,  // Top-left
 
             // Back face
-            -0.5f, -0.5f, -0.5f, 0.0f, 0.0f, // Bottom-left (green)
-            0.5f, -0.5f, -0.5f, 1.0f, 0.0f, // Bottom-right (green)
-            0.5f,  0.5f, -0.5f, 1.0f, 1.0f, // Top-right (green)
-            -0.5f,  0.5f, -0.5f, 1.0f, 0.0f, // Top-left (green)
+            -0.5f, -0.5f, -0.5f,  1.0f, 0.0f,
+            0.5f, -0.5f, -0.5f,  0.0f, 0.0f,
+            0.5f,  0.5f, -0.5f,  0.0f, 1.0f,
+            -0.5f,  0.5f, -0.5f,  1.0f, 1.0f,
 
             // Left face
-            -0.5f, -0.5f, -0.5f, 0.0f, 0.0f, // Bottom-left (blue)
-            -0.5f, -0.5f,  0.5f, 1.0f, 0.0f, // Bottom-right (blue)
-            -0.5f,  0.5f,  0.5f, 1.0f, 1.0f, // Top-right (blue)
-            -0.5f,  0.5f, -0.5f, 1.0f, 0.0f, // Top-left (blue)
+            -0.5f, -0.5f, -0.5f,  0.0f, 0.0f,
+            -0.5f, -0.5f,  0.5f,  1.0f, 0.0f,
+            -0.5f,  0.5f,  0.5f,  1.0f, 1.0f,
+            -0.5f,  0.5f, -0.5f,  0.0f, 1.0f,
 
             // Right face
-            0.5f, -0.5f, -0.5f, 0.0f, 0.0f, // Bottom-left (yellow)
-            0.5f, -0.5f,  0.5f, 1.0f, 0.0f, // Bottom-right (yellow)
-            0.5f,  0.5f,  0.5f, 1.0f, 1.0f, // Top-right (yellow)
-            0.5f,  0.5f, -0.5f, 1.0f, 0.0f, // Top-left (yellow)
+            0.5f, -0.5f,  0.5f,  0.0f, 0.0f,
+            0.5f, -0.5f, -0.5f,  1.0f, 0.0f,
+            0.5f,  0.5f, -0.5f,  1.0f, 1.0f,
+            0.5f,  0.5f,  0.5f,  0.0f, 1.0f,
 
             // Top face
-            -0.5f,  0.5f, -0.5f, 0.0f, 0.0f, // Bottom-left (magenta)
-            0.5f,  0.5f, -0.5f, 1.0f, 0.0f, // Bottom-right (magenta)
-            0.5f,  0.5f,  0.5f, 1.0f, 1.0f, // Top-right (magenta)
-            -0.5f,  0.5f,  0.5f, 1.0f, 0.0f, // Top-left (magenta)
+            -0.5f,  0.5f,  0.5f,  0.0f, 0.0f,
+            0.5f,  0.5f,  0.5f,  1.0f, 0.0f,
+            0.5f,  0.5f, -0.5f,  1.0f, 1.0f,
+            -0.5f,  0.5f, -0.5f,  0.0f, 1.0f,
 
             // Bottom face
-            -0.5f, -0.5f, -0.5f,0.0f, 0.0f, // Bottom-left (cyan)
-            0.5f, -0.5f, -0.5f, 1.0f, 0.0f, // Bottom-right (cyan)
-            0.5f, -0.5f,  0.5f, 1.0f, 1.0f, // Top-right (cyan)
-            -0.5f, -0.5f, 0.5f, 1.0f, 0.0f  // Top-left (cyan)
+            -0.5f, -0.5f, -0.5f,  0.0f, 0.0f,
+            0.5f, -0.5f, -0.5f,  1.0f, 0.0f,
+            0.5f, -0.5f,  0.5f,  1.0f, 1.0f,
+            -0.5f, -0.5f,  0.5f,  0.0f, 1.0f
     };
 
     const GLuint indices[] = {
             // Front face
-            0, 1, 2, 0, 2, 3,
+            0,  1,  2,  2,  3,  0,
+
             // Back face
-            4, 5, 6, 4, 6, 7,
+            4,  5,  6,  6,  7,  4,
+
             // Left face
-            8, 9, 10, 8, 10, 11,
+            8,  9, 10, 10, 11,  8,
+
             // Right face
-            12, 13, 14, 12, 14, 15,
+            12, 13, 14, 14, 15, 12,
+
             // Top face
-            16, 17, 18, 16, 18, 19,
+            16, 17, 18, 18, 19, 16,
+
             // Bottom face
-            20, 21, 22, 20, 22, 23
+            20, 21, 22, 22, 23, 20
     };
 
     glGenVertexArrays(1, &cube_vao);
@@ -299,7 +303,12 @@ void ARCoreManager::OnSurfaceCreated() {
     glEnableVertexAttribArray(1);
     glVertexAttribPointer(1, 2, GL_FLOAT, GL_FALSE, 5 * sizeof(GLfloat), (void *)(3 * sizeof(GLfloat)));
 
-    LoadTextureFromFile("textures/fb.png");
+    LoadTextureFromFile("textures/fb.png", cube_textureID[0]);
+    LoadTextureFromFile("textures/email.png", cube_textureID[1]);
+    LoadTextureFromFile("textures/evernote.png", cube_textureID[2]);
+    LoadTextureFromFile("textures/location.png", cube_textureID[3]);
+    LoadTextureFromFile("textures/paypal.png", cube_textureID[4]);
+    LoadTextureFromFile("textures/podcast.png", cube_textureID[5]);
 
     glBindVertexArray(0);
     /************************************************************************************************/
@@ -494,13 +503,15 @@ void ARCoreManager::OnDrawFrame(int width, int height, int displayRotation) {
         GLuint mvpLocation = glGetUniformLocation(object_shader_program, "mvp");
         glUniformMatrix4fv(mvpLocation, 1, GL_FALSE, glm::value_ptr(cube_mvp));
 
-        glActiveTexture(GL_TEXTURE0);
-        glBindTexture(GL_TEXTURE_2D, cube_textureID);
-        glUniform1i(glGetUniformLocation(object_shader_program, "uTexture"), 0);
         glBindVertexArray(cube_vao);
-        glDrawElements(GL_TRIANGLES, 36, GL_UNSIGNED_INT, 0);
-        glBindVertexArray(0);
+        glActiveTexture(GL_TEXTURE0);
+        for(int i = 0; i < 6; i++) {
+            glBindTexture(GL_TEXTURE_2D, cube_textureID[i]);
+            glUniform1i(glGetUniformLocation(object_shader_program, "uTexture"), 0);
+            glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_INT, (void*)(6 * i * sizeof(GLuint)));
+        }
 
+        glBindVertexArray(0);
         glUseProgram(0);
         glDisable(GL_DEPTH_TEST);
         glDisable(GL_BLEND);

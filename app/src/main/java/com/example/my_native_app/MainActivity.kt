@@ -2,6 +2,7 @@ package com.example.my_native_app
 
 import android.Manifest
 import android.content.Context
+import android.content.res.AssetManager
 import android.content.res.Configuration
 import android.graphics.Camera
 import android.os.Bundle
@@ -60,12 +61,16 @@ class MainActivity : ComponentActivity() {
 
     private lateinit var arSurfaceView: ARSurfaceView
 
+    override fun getAssets(): AssetManager {
+        return super.getAssets()
+    }
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         println("SANJU : onCreate")
 
         cameraPermissionViewModel.checkCameraPermission()
-        ARNative.onCreate(this, this)
+        ARNative.onCreate(this)
 
         enableEdgeToEdge()
         setContent {

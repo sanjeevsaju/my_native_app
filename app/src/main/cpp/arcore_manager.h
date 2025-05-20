@@ -29,7 +29,7 @@
 
 class ARCoreManager {
 public:
-    bool Initialize(void* env, jobject context, jobject activity, AAssetManager* mgr);
+    bool Initialize(void* env, jobject context, AAssetManager* mgr);
     void Resume();
     void Pause();
     void OnSurfaceCreated();
@@ -41,7 +41,7 @@ public:
     void DrawVector(glm::vec3 start, glm::vec3 end);
     bool IsDepthSupported();
     static void TransformPoint(const float model_matrix[16], const float local_point[3], float world_point[3]);
-    void LoadTextureFromFile(const char* path);
+    void LoadTextureFromFile(const char* path, GLuint& textureID);
     std::string LoadShaderFromAsset(const char* shaderPath);
 
 private:
@@ -74,7 +74,7 @@ private:
     GLuint cube_vao;
     GLuint cube_vbo;
     GLuint cube_index_buffer;
-    GLuint cube_textureID;
+    GLuint cube_textureID[6];
 
     GLuint plane_vao;
     GLuint plane_vbo;

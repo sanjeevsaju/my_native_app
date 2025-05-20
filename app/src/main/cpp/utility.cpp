@@ -108,7 +108,7 @@ void ARCoreManager::TranslateCube(float x, float y, float z) {
     cube_translation_vector += direction_on_plane;
 }
 
-void ARCoreManager::LoadTextureFromFile(const char *path) {
+void ARCoreManager::LoadTextureFromFile(const char *path, GLuint& textureID) {
 
     if(!asset_manager) {
         LOGI("SANJU : asset_manager is null");
@@ -126,6 +126,7 @@ void ARCoreManager::LoadTextureFromFile(const char *path) {
     off_t asset_size = AAsset_getLength(asset);
 
     int width, height, channels;
+    stbi_set_flip_vertically_on_load(true);
     unsigned char* data = stbi_load_from_memory(static_cast<const unsigned char*>(asset_data), asset_size, &width, &height, &channels, STBI_rgb_alpha);
     AAsset_close(asset);
 
@@ -134,8 +135,8 @@ void ARCoreManager::LoadTextureFromFile(const char *path) {
         return;
     }
 
-    glGenTextures(1, &cube_textureID);
-    glBindTexture(GL_TEXTURE_2D, cube_textureID);
+    glGenTextures(1, &textureID);
+    glBindTexture(GL_TEXTURE_2D, textureID);
 
     glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, width, height, 0, GL_RGBA, GL_UNSIGNED_BYTE, data);
     glGenerateMipmap(GL_TEXTURE_2D);
@@ -146,13 +147,14 @@ void ARCoreManager::LoadTextureFromFile(const char *path) {
     glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR_MIPMAP_LINEAR);
     glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
 
+    glBindTexture(GL_TEXTURE_2D, 0);
     stbi_image_free(data);
 }
 
 std::string ARCoreManager::LoadShaderFromAsset(const char *shaderPath) {
     if(!asset_manager) {
         LOGI("SANJU : asset_manager is null");
-        return "Fuck You!";
+        return "!";
     }
 
     AAsset* asset = AAssetManager_open(asset_manager, shaderPath, AASSET_MODE_BUFFER);

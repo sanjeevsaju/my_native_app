@@ -9,7 +9,7 @@ object ARNative {
         println("SANJU : ARNative init - ${Thread.currentThread().name}")
     }
 
-    external fun onCreate(context: Context, activity : Activity)
+    external fun onCreate(context: Context)
     external fun onResume(activity: Activity)
     external fun onPause()
     external fun onSurfaceCreated()
